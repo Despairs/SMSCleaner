@@ -1,38 +1,44 @@
 package despairs.smscleaner;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteQueryBuilder;
-import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.ExpandableListView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
+    private ExpandableListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-
-        mRecyclerView.setHasFixedSize(true);
-
-
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        listView = (ExpandableListView) findViewById(R.id.expanded_list_view);
 
         DataLayer data = new DataLayer(this);
+        List<Sms> smsList = data.getSms();
 
-        mAdapter = new SmsDataAdapter(data.getSms());
-        mRecyclerView.setAdapter(mAdapter);
+        List<GroupedSms> groupedSms = new ArrayList<>();
+        for (Sms sms : smsList) {
+            GroupedSms group = new GroupedSms(sms.getFrom());
+            if (!groupedSms.contains(group)) {
+                groupedSms.add(group);
+            }
+            int index = groupedSms.indexOf(group);
+            groupedSms.get(index).getSmsList().add(sms);
+        }
+        for (GroupedSms group : groupedSms) {
+            String contactName = data.getContactNameByPhone(group.getGroupId());
+            if (contactName != null) {
+                group.setGroupId(contactName);
+            }
+        }
+        Collections.sort(groupedSms);
+        GroupedSmsAdapter adapter = new GroupedSmsAdapter(getApplicationContext(), groupedSms);
+
+        listView.setAdapter(adapter);
     }
 }

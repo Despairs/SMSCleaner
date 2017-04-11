@@ -5,9 +5,10 @@
     android:layout_height="match_parent"
     tools:context="despairs.smscleaner.MainActivity">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/my_recycler_view"
+    <ExpandableListView
+        android:id="@+id/expanded_list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:indicatorLeft="325dp"
         android:scrollbars="vertical" />
 </LinearLayout>

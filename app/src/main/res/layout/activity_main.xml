@@ -5,10 +5,31 @@
     android:layout_height="match_parent"
     tools:context="despairs.smscleaner.MainActivity">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/not_default_app"
+        android:layout_gravity="center_horizontal|bottom"
+        >
+
+        <Button
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:text="Test"
+            android:textAllCaps="false"
+            android:textSize="15sp"
+            android:textColor="#ffffff"
+            android:id="@+id/change_default_app"
+            />
+
+    </LinearLayout>
+
     <ExpandableListView
         android:id="@+id/expanded_list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:indicatorLeft="325dp"
         android:scrollbars="vertical" />
+
 </LinearLayout>
+

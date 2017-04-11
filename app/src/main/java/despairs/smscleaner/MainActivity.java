@@ -59,33 +59,35 @@ public class MainActivity extends AppCompatActivity {
         defaultAppResolve();
     }
 
-    private void defaultAppResolve() {
+    @Override
+    protected void onPause() {
+        super.onPause();
+        defaultAppResolve();
+    }
 
-        if (!isDefaultSmsApp(getApplicationContext())) {
+    private void defaultAppResolve() {
+        if (defaultApp != null) {
+            setUpDefaultAppResolver(defaultApp);
+        } else if (!isDefaultSmsApp(getApplicationContext())) {
             Log.d("", "not default app");
-            // App is not default.
-            // Show the "not currently set as the default SMS app" interface
             View viewGroup = findViewById(R.id.not_default_app);
             viewGroup.setVisibility(View.VISIBLE);
-
-            // Set up a button that allows the user to change the default SMS app
-            setUpDefaultAppResolver();
+            setUpDefaultAppResolver(getPackageName());
         } else {
-            // App is the default.
-            // Hide the "not currently set as the default SMS app" interface
             View viewGroup = findViewById(R.id.not_default_app);
             viewGroup.setVisibility(View.GONE);
         }
     }
 
     @TargetApi(19)
-    private void setUpDefaultAppResolver(){
+    private void setUpDefaultAppResolver(final String pkg) {
         Button button = (Button) findViewById(R.id.change_default_app);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT);
-                intent.putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, getPackageName());
+                intent.putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, pkg);
                 startActivityForResult(intent, 256);
+                startActivity(intent);
             }
         });
     }
@@ -103,15 +105,16 @@ public class MainActivity extends AppCompatActivity {
                     msgId = "Not nice work";
                 }
                 Toast.makeText(getBaseContext(), msgId, Toast.LENGTH_SHORT).show();
-
+                Intent intent = new Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT);
+                intent.putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, defaultApp);
+                startActivity(intent);
         }
     }
 
-    public static boolean isDefaultSmsApp(Context context){
+    public static boolean isDefaultSmsApp(Context context) {
         final String myPackageName = context.getPackageName();
-
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
-            if(!Telephony.Sms.getDefaultSmsPackage(context).equals(myPackageName))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if (!Telephony.Sms.getDefaultSmsPackage(context).equals(myPackageName))
                 return false;
         }
         return true;

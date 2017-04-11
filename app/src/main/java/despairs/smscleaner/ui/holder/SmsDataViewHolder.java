@@ -1,8 +1,10 @@
-package despairs.smscleaner;
+package despairs.smscleaner.ui.holder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
+
+import despairs.smscleaner.R;
 
 /**
  * Created by Home on 10.04.2017.

@@ -1,4 +1,4 @@
-package despairs.smscleaner;
+package despairs.smscleaner.utils;
 
 import android.app.Service;
 import android.content.Intent;

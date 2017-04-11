@@ -1,4 +1,4 @@
-package despairs.smscleaner;
+package despairs.smscleaner.utils;
 
 import android.app.Activity;
 import android.database.Cursor;
@@ -9,6 +9,8 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import despairs.smscleaner.app.model.Sms;
 
 /**
  * Created by EKovtunenko on 11.04.2017.

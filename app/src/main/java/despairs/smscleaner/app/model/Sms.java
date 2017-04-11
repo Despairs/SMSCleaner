@@ -1,4 +1,4 @@
-package despairs.smscleaner;
+package despairs.smscleaner.app.model;
 
 import java.util.Date;
 

@@ -1,4 +1,4 @@
-package despairs.smscleaner;
+package despairs.smscleaner.utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

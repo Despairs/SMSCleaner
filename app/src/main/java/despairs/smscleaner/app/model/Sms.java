@@ -8,7 +8,8 @@ import java.util.Date;
 
 public class Sms {
     private Long id;
-    private String from;
+    private String address;
+    private String mappedAddress;
     private String text;
     private Date date;
 
@@ -16,9 +17,9 @@ public class Sms {
 
     }
 
-    public Sms(Long id, String from, String text, Date date) {
+    public Sms(Long id, String address, String text, Date date) {
         this.id = id;
-        this.from = from;
+        this.address = address;
         this.text = text;
         this.date = date;
     }
@@ -39,19 +40,27 @@ public class Sms {
         this.text = text;
     }
 
-    public String getFrom() {
-        return from;
-    }
-
-    public void setFrom(String from) {
-        this.from = from;
-    }
-
     public Date getDate() {
         return date;
     }
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getMappedAddress() {
+        return mappedAddress;
+    }
+
+    public void setMappedAddress(String mappedAddress) {
+        this.mappedAddress = mappedAddress;
     }
 }

@@ -2,7 +2,13 @@ package despairs.smscleaner.ui;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Visibility;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.ExpandableListView;
+import android.widget.ListView;
 
 import java.util.List;
 
@@ -32,7 +38,48 @@ public class MainActivity extends AsyncActivity implements MainView {
             presenter.bindView(this);
         }
         presenter.init(this);
+        listView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                if (parent.isGroupExpanded(groupPosition)) {
+                    parent.collapseGroup(groupPosition);
+                } else {
+                    parent.expandGroup(groupPosition);
+                    final int groupFlatPos = parent.getFlatListPosition(ExpandableListView.getPackedPositionForGroup(groupPosition));
+                    parent.smoothScrollToPosition(groupFlatPos + adapter.getChildrenCount(groupPosition), groupFlatPos);
+                }
+                return true;
 
+            }
+        });
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+                long packedPosition = listView.getExpandableListPosition(position);
+                if (ExpandableListView.getPackedPositionType(packedPosition) == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+//                    int groupPosition = ExpandableListView.getPackedPositionGroup(packedPosition);
+                    Log.i("DESPAIRS", "POSITION: " + position);
+                    GroupedSms group = (GroupedSms) listView.getItemAtPosition(position);
+                    group.setSelected(Boolean.TRUE);
+                    adapter.notifyDataSetChanged();
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+    }
+
+    public View getViewByPosition(int pos, ListView listView) {
+        final int firstListItemPosition = listView.getFirstVisiblePosition();
+        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
+
+        if (pos < firstListItemPosition || pos > lastListItemPosition) {
+            return listView.getAdapter().getView(pos, null, listView);
+        } else {
+            final int childIndex = pos - firstListItemPosition;
+            return listView.getChildAt(childIndex);
+        }
     }
 
     @Override

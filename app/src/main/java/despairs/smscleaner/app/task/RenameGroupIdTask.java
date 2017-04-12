@@ -12,7 +12,7 @@ import despairs.smscleaner.utils.DataLayer;
 /**
  * Created by Despairs on 12.01.16.
  */
-public class RenameSmsAddressTask extends AsyncTask<Object, Void, List<GroupedSms>> {
+public class RenameGroupIdTask extends AsyncTask<Object, Void, List<GroupedSms>> {
 
     public interface IRenameSmsAddressTaskCallback {
         void onRenameSmsAddressCallback(List<GroupedSms> result);
@@ -20,7 +20,7 @@ public class RenameSmsAddressTask extends AsyncTask<Object, Void, List<GroupedSm
 
     private final IRenameSmsAddressTaskCallback caller;
 
-    public RenameSmsAddressTask(IRenameSmsAddressTaskCallback caller) {
+    public RenameGroupIdTask(IRenameSmsAddressTaskCallback caller) {
         this.caller = caller;
     }
 
@@ -32,6 +32,9 @@ public class RenameSmsAddressTask extends AsyncTask<Object, Void, List<GroupedSm
                 String contactName = data.getContactNameByPhone(group.getGroupId());
                 if (contactName != null) {
                     group.setGroupId(contactName);
+                    for (Sms sms : group.getSmsList()) {
+                        sms.setMappedAddress(contactName);
+                    }
                 }
             }
         }

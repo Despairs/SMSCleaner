@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.util.List;
@@ -74,6 +75,11 @@ public class GroupedSmsAdapter extends BaseExpandableListAdapter {
         }
         TextView groupTitleView = (TextView) convertView.findViewById(R.id.group_title);
         TextView groupChildCountView = (TextView) convertView.findViewById(R.id.group_child_count);
+        CheckBox chk = (CheckBox) convertView.findViewById(R.id.group_check_box);
+
+        chk.setVisibility(data.get(groupPosition).isSelected() ? View.VISIBLE : View.GONE);
+        chk.setChecked(data.get(groupPosition).isSelected());
+
         groupTitleView.setText(data.get(groupPosition).getGroupId());
         groupChildCountView.setText(String.format("(%d)", data.get(groupPosition).getSmsList().size()));
         return convertView;

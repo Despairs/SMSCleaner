@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import despairs.smscleaner.app.ApplicationLoader;
 import despairs.smscleaner.app.model.Sms;
 
 /**

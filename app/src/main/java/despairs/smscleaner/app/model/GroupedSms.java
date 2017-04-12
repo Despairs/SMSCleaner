@@ -11,6 +11,7 @@ import java.util.List;
 
 public class GroupedSms implements Comparable<GroupedSms> {
     private String groupId;
+    private boolean isSelected;
     private List<Sms> smsList;
 
     public GroupedSms(String groupId) {
@@ -23,6 +24,14 @@ public class GroupedSms implements Comparable<GroupedSms> {
 
     public void setGroupId(String groupId) {
         this.groupId = groupId;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 
     public List<Sms> getSmsList() {

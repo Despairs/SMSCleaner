@@ -17,16 +17,31 @@ import despairs.smscleaner.app.view.MainView;
 /**
  * Created by Despairs on 18.03.16.
  */
-public class MainPresenter extends BasePresenter<MainView> {
+public class MainPresenter extends BasePresenter<MainView> implements LoadSmsTask.ILoadSmsTaskCallback, RenameSmsAddressTask.IRenameSmsAddressTaskCallback {
 
     private LoadSmsTask loadSmsTask = null;
     private RenameSmsAddressTask renameTask = null;
 
+    private List<Sms> smsList;
+    private List<GroupedSms> groupedSms;
+
+    private Activity activity;
+
     public void init(Activity activity) {
         ApplicationLoader.initApplication();
-        DataLayer data = new DataLayer(activity);
-        List<Sms> smsList = data.getSms();
-        List<GroupedSms> groupedSms = new ArrayList<>();
+        this.activity = activity;
+        view.showProgress(true);
+        loadSmsTask = new LoadSmsTask(this);
+        loadSmsTask.execute(activity);
+    }
+
+    @Override
+    public void receiveLoadSmsTaskCallback(List<Sms> result) {
+        this.smsList = result;
+        loadSmsTask = null;
+        if (groupedSms == null) {
+            groupedSms = new ArrayList<>();
+        }
         for (Sms sms : smsList) {
             GroupedSms group = new GroupedSms(sms.getFrom());
             if (!groupedSms.contains(group)) {
@@ -35,9 +50,17 @@ public class MainPresenter extends BasePresenter<MainView> {
             int index = groupedSms.indexOf(group);
             groupedSms.get(index).getSmsList().add(sms);
         }
-
         Collections.sort(groupedSms);
         view.changeGroupedSmsAdapterData(groupedSms);
+        view.showProgress(false);
+        renameTask = new RenameSmsAddressTask(this);
+        renameTask.execute(activity,groupedSms);
     }
 
+    @Override
+    public void onRenameSmsAddressCallback(List<GroupedSms> result) {
+        this.groupedSms = result;
+        renameTask = null;
+        view.changeGroupedSmsAdapterData(groupedSms);
+    }
 }

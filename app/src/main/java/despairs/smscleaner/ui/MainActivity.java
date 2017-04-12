@@ -12,7 +12,7 @@ import despairs.smscleaner.app.presenter.MainPresenter;
 import despairs.smscleaner.app.view.MainView;
 import despairs.smscleaner.ui.adapter.GroupedSmsAdapter;
 
-public class MainActivity extends AppCompatActivity implements MainView {
+public class MainActivity extends AsyncActivity implements MainView {
 
     private ExpandableListView listView;
     private GroupedSmsAdapter adapter;
@@ -111,5 +111,20 @@ public class MainActivity extends AppCompatActivity implements MainView {
             adapter.setData(smsList);
             adapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void showErrorAlert(String message) {
+        showAsyncTaskError(message);
+    }
+
+    @Override
+    public void showProgress(boolean show) {
+        showAsyncTaskProgress(show);
+    }
+
+    @Override
+    protected String getProgressDialogMessage() {
+        return "Пожалуйста, подождите";
     }
 }

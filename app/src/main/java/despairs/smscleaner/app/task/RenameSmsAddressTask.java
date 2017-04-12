@@ -28,9 +28,11 @@ public class RenameSmsAddressTask extends AsyncTask<Object, Void, List<GroupedSm
     protected List<GroupedSms> doInBackground(Object... params) {
         DataLayer data = new DataLayer((Activity) params[0]);
         for (GroupedSms group : (List<GroupedSms>) params[1]) {
-            String contactName = data.getContactNameByPhone(group.getGroupId());
-            if (contactName != null) {
-                group.setGroupId(contactName);
+            if (group.getGroupId().startsWith("+7")) {
+                String contactName = data.getContactNameByPhone(group.getGroupId());
+                if (contactName != null) {
+                    group.setGroupId(contactName);
+                }
             }
         }
         return (List<GroupedSms>) params[1];

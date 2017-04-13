@@ -1,19 +1,18 @@
 package despairs.smscleaner.ui;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.transition.Visibility;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.CheckBox;
 import android.widget.ExpandableListView;
-import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.List;
 
-import despairs.smscleaner.app.model.GroupedSms;
 import despairs.smscleaner.R;
+import despairs.smscleaner.app.model.GroupedSms;
 import despairs.smscleaner.app.presenter.MainPresenter;
 import despairs.smscleaner.app.view.MainView;
 import despairs.smscleaner.ui.adapter.GroupedSmsAdapter;
@@ -24,6 +23,8 @@ public class MainActivity extends AsyncActivity implements MainView {
     private GroupedSmsAdapter adapter;
 
     private MainPresenter presenter = null;
+
+    private Boolean showMenu = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,24 +63,14 @@ public class MainActivity extends AsyncActivity implements MainView {
                     GroupedSms group = (GroupedSms) listView.getItemAtPosition(position);
                     group.setSelected(Boolean.TRUE);
                     adapter.notifyDataSetChanged();
+                    showMenu = true;
+                    invalidateOptionsMenu();
                     return true;
                 } else {
                     return false;
                 }
             }
         });
-    }
-
-    public View getViewByPosition(int pos, ListView listView) {
-        final int firstListItemPosition = listView.getFirstVisiblePosition();
-        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
-
-        if (pos < firstListItemPosition || pos > lastListItemPosition) {
-            return listView.getAdapter().getView(pos, null, listView);
-        } else {
-            final int childIndex = pos - firstListItemPosition;
-            return listView.getChildAt(childIndex);
-        }
     }
 
     @Override
@@ -92,6 +83,26 @@ public class MainActivity extends AsyncActivity implements MainView {
     public void onPause() {
         super.onPause();
         presenter.unbindView();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_action_bar, menu);
+        if (showMenu) {
+            for (int i = 0; i < menu.size(); i++)
+                menu.getItem(i).setVisible(true);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_delete_selected) {
+            Toast.makeText(getBaseContext(), "Жмакнул!", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 //    private void defaultAppResolve() {

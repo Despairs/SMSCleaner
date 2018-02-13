@@ -21,7 +21,7 @@ import despairs.smscleaner.utils.DateUtils;
 public class GroupedSmsAdapter extends BaseExpandableListAdapter {
 
     private List<GroupedSms> data;
-    private Context ctx;
+    private final Context ctx;
 
     public GroupedSmsAdapter(Context ctx, List<GroupedSms> data) {
         this.data = data;

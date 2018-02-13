@@ -1,14 +1,14 @@
 package despairs.smscleaner.ui;
 
+import android.Manifest;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.annotation.NonNull;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import despairs.smscleaner.R;
@@ -16,8 +16,11 @@ import despairs.smscleaner.app.model.GroupedSms;
 import despairs.smscleaner.app.presenter.MainPresenter;
 import despairs.smscleaner.app.view.MainView;
 import despairs.smscleaner.ui.adapter.GroupedSmsAdapter;
+import despairs.smscleaner.utils.PermissionUtils;
 
 public class MainActivity extends AsyncActivity implements MainView {
+
+    private static final int PERMISSION_REQUEST = 666;
 
     private ExpandableListView listView;
     private GroupedSmsAdapter adapter;
@@ -32,56 +35,44 @@ public class MainActivity extends AsyncActivity implements MainView {
         setContentView(R.layout.activity_main);
         listView = (ExpandableListView) findViewById(R.id.expanded_list_view);
 
-        if (presenter == null) {
-            presenter = new MainPresenter();
-        }
-        if (!presenter.isBinded()) {
-            presenter.bindView(this);
-        }
-        presenter.init(this);
-        listView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-            @Override
-            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                if (parent.isGroupExpanded(groupPosition)) {
-                    parent.collapseGroup(groupPosition);
-                } else {
-                    parent.expandGroup(groupPosition);
-                    final int groupFlatPos = parent.getFlatListPosition(ExpandableListView.getPackedPositionForGroup(groupPosition));
-                    parent.smoothScrollToPosition(groupFlatPos + adapter.getChildrenCount(groupPosition), groupFlatPos);
-                }
-                return true;
-
-            }
-        });
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
-                long packedPosition = listView.getExpandableListPosition(position);
-                if (ExpandableListView.getPackedPositionType(packedPosition) == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
-//                    int groupPosition = ExpandableListView.getPackedPositionGroup(packedPosition);
-                    Log.i("DESPAIRS", "POSITION: " + position);
-                    GroupedSms group = (GroupedSms) listView.getItemAtPosition(position);
-                    group.setSelected(Boolean.TRUE);
-                    adapter.notifyDataSetChanged();
-                    showMenu = true;
-                    invalidateOptionsMenu();
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
+        presenter = new MainPresenter();
         presenter.bindView(this);
+
+        if (PermissionUtils.isPermisssionsGranted(this, Manifest.permission.READ_SMS, Manifest.permission.READ_CONTACTS)) {
+            presenter.loadSmsList();
+        } else {
+            requestPermissions();
+        }
+
+        listView.setOnGroupClickListener((parent, v, groupPosition, id) -> {
+            if (parent.isGroupExpanded(groupPosition)) {
+                parent.collapseGroup(groupPosition);
+            } else {
+                parent.expandGroup(groupPosition);
+                final int groupFlatPos = parent.getFlatListPosition(ExpandableListView.getPackedPositionForGroup(groupPosition));
+                parent.smoothScrollToPosition(groupFlatPos + adapter.getChildrenCount(groupPosition), groupFlatPos);
+            }
+            return true;
+
+        });
+        listView.setOnItemLongClickListener((adapterView, view, position, id) -> {
+            long packedPosition = listView.getExpandableListPosition(position);
+            if (ExpandableListView.getPackedPositionType(packedPosition) == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+                GroupedSms group = (GroupedSms) listView.getItemAtPosition(position);
+                group.setSelected(!group.isSelected());
+                adapter.notifyDataSetChanged();
+                showMenu = group.isSelected();
+                invalidateOptionsMenu();
+                return true;
+            } else {
+                return false;
+            }
+        });
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onDestroy() {
+        super.onDestroy();
         presenter.unbindView();
     }
 
@@ -104,61 +95,6 @@ public class MainActivity extends AsyncActivity implements MainView {
         }
         return super.onOptionsItemSelected(item);
     }
-
-//    private void defaultAppResolve() {
-//        if (defaultApp != null) {
-//            setUpDefaultAppResolver(defaultApp);
-//        } else if (!isDefaultSmsApp(getApplicationContext())) {
-//            Log.d("", "not default app");
-//            View viewGroup = findViewById(R.id.not_default_app);
-//            viewGroup.setVisibility(View.VISIBLE);
-//            setUpDefaultAppResolver(getPackageName());
-//        } else {
-//            View viewGroup = findViewById(R.id.not_default_app);
-//            viewGroup.setVisibility(View.GONE);
-//        }
-//    }
-//
-//    @TargetApi(19)
-//    private void setUpDefaultAppResolver(final String pkg) {
-//        Button button = (Button) findViewById(R.id.change_default_app);
-//        button.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                Intent intent = new Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT);
-//                intent.putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, pkg);
-//                startActivityForResult(intent, 256);
-//                startActivity(intent);
-//            }
-//        });
-//    }
-//
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        switch (requestCode) {
-//            case 256:
-//                String msgId;
-//                if (resultCode == Activity.RESULT_OK) {
-//                    View viewGroup = findViewById(R.id.not_default_app);
-//                    viewGroup.setVisibility(View.GONE);
-//                    msgId = "Nice work";
-//                } else {
-//                    msgId = "Not nice work";
-//                }
-//                Toast.makeText(getBaseContext(), msgId, Toast.LENGTH_SHORT).show();
-//                Intent intent = new Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT);
-//                intent.putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, defaultApp);
-//                startActivity(intent);
-//        }
-//    }
-//
-//    public static boolean isDefaultSmsApp(Context context) {
-//        final String myPackageName = context.getPackageName();
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            if (!Telephony.Sms.getDefaultSmsPackage(context).equals(myPackageName))
-//                return false;
-//        }
-//        return true;
-//    }
 
     @Override
     public void changeGroupedSmsAdapterData(List<GroupedSms> smsList) {
@@ -184,5 +120,31 @@ public class MainActivity extends AsyncActivity implements MainView {
     @Override
     protected String getProgressDialogMessage() {
         return "Пожалуйста, подождите";
+    }
+
+    private void requestPermissions() {
+        List<String> permissionsToRequest = new ArrayList<>();
+        if (PermissionUtils.isPermisssionDenied(this, Manifest.permission.READ_SMS)) {
+            permissionsToRequest.add(Manifest.permission.READ_SMS);
+        }
+        if (PermissionUtils.isPermisssionDenied(this, Manifest.permission.READ_CONTACTS)) {
+            permissionsToRequest.add(Manifest.permission.READ_CONTACTS);
+        }
+        if (!permissionsToRequest.isEmpty()) {
+            PermissionUtils.requestPermissions(this, permissionsToRequest, PERMISSION_REQUEST);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST:
+                if (PermissionUtils.isAllPermissionsAccepted(grantResults)) {
+                    presenter.loadSmsList();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 }

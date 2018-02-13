@@ -5,7 +5,7 @@ package despairs.smscleaner.app.view;
  */
 public interface AsyncView {
 
-    public void showErrorAlert(String message);
+    void showErrorAlert(String message);
 
-    public void showProgress(boolean show);
+    void showProgress(boolean show);
 }

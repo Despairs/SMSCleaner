@@ -9,7 +9,7 @@
         android:id="@+id/child_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
         android:text="01.01.2017"
@@ -20,9 +20,10 @@
         android:id="@+id/child_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
+        android:textColor="@android:color/white"
         android:text="Child text"
         android:maxLines="5"/>
 

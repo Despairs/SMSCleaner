@@ -38,7 +38,7 @@ public class UserConfig {
         editor.putBoolean("passcodeEnabled", passcodeEnabled);
         editor.putString("lastPauseTime", String.valueOf(lastPauseTime));
         editor.putString("autoLockIn", String.valueOf(autoLockIn));
-        editor.commit();
+        editor.apply();
     }
 
     public static void load() {
@@ -70,7 +70,7 @@ public class UserConfig {
     }
 
     public static void forceClear() {
-        ApplicationLoader.applicationContext.getSharedPreferences(cfgName, cfgMode).edit().clear().commit();
+        ApplicationLoader.applicationContext.getSharedPreferences(cfgName, cfgMode).edit().clear().apply();
     }
 
 

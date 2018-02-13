@@ -6,11 +6,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import despairs.smscleaner.app.task.LoadSmsTask;
-import despairs.smscleaner.app.task.RenameGroupIdTask;
 import despairs.smscleaner.app.model.GroupedSms;
 import despairs.smscleaner.app.model.Sms;
-import despairs.smscleaner.app.ApplicationLoader;
+import despairs.smscleaner.app.task.LoadSmsTask;
+import despairs.smscleaner.app.task.RenameGroupIdTask;
 import despairs.smscleaner.app.view.MainView;
 
 /**
@@ -21,27 +20,21 @@ public class MainPresenter extends BasePresenter<MainView> implements LoadSmsTas
     private LoadSmsTask loadSmsTask = null;
     private RenameGroupIdTask renameTask = null;
 
-    private List<Sms> smsList;
     private List<GroupedSms> groupedSms;
 
-    private Activity activity;
-
-    public void init(Activity activity) {
-        ApplicationLoader.initApplication();
-        this.activity = activity;
+    public void loadSmsList() {
         view.showProgress(true);
         loadSmsTask = new LoadSmsTask(this);
-        loadSmsTask.execute(activity);
+        loadSmsTask.execute();
     }
 
     @Override
     public void receiveLoadSmsTaskCallback(List<Sms> result) {
-        this.smsList = result;
         loadSmsTask = null;
         if (groupedSms == null) {
             groupedSms = new ArrayList<>();
         }
-        for (Sms sms : smsList) {
+        for (Sms sms : result) {
             GroupedSms group = new GroupedSms(sms.getAddress());
             if (!groupedSms.contains(group)) {
                 groupedSms.add(group);
@@ -53,7 +46,7 @@ public class MainPresenter extends BasePresenter<MainView> implements LoadSmsTas
         view.changeGroupedSmsAdapterData(groupedSms);
         view.showProgress(false);
         renameTask = new RenameGroupIdTask(this);
-        renameTask.execute(activity, groupedSms);
+        renameTask.execute(groupedSms);
     }
 
     @Override

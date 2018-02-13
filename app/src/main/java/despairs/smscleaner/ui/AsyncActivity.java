@@ -2,7 +2,6 @@ package despairs.smscleaner.ui;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 
 /**
@@ -35,11 +34,7 @@ public abstract class AsyncActivity extends AppCompatActivity {
                 .setMessage(message)
                 .setCancelable(false)
                 .setPositiveButton("Окей",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
+                        (dialog, id) -> dialog.cancel());
         AlertDialog alert = builder.create();
         alert.show();
     }

@@ -25,7 +25,7 @@ public class LoadSmsTask extends AsyncTask<Activity, Void, List<Sms>> {
 
     @Override
     protected List<Sms> doInBackground(Activity... params) {
-        return new DataLayer(params[0]).getSms();
+        return new DataLayer().getSms();
     }
 
     @Override

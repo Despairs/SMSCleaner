@@ -1,6 +1,5 @@
 package despairs.smscleaner.app.task;
 
-import android.app.Activity;
 import android.os.AsyncTask;
 
 import java.util.List;
@@ -26,8 +25,8 @@ public class RenameGroupIdTask extends AsyncTask<Object, Void, List<GroupedSms>>
 
     @Override
     protected List<GroupedSms> doInBackground(Object... params) {
-        DataLayer data = new DataLayer((Activity) params[0]);
-        for (GroupedSms group : (List<GroupedSms>) params[1]) {
+        DataLayer data = new DataLayer();
+        for (GroupedSms group : (List<GroupedSms>) params[0]) {
             if (group.getGroupId().startsWith("+7")) {
                 String contactName = data.getContactNameByPhone(group.getGroupId());
                 if (contactName != null) {
@@ -38,7 +37,7 @@ public class RenameGroupIdTask extends AsyncTask<Object, Void, List<GroupedSms>>
                 }
             }
         }
-        return (List<GroupedSms>) params[1];
+        return (List<GroupedSms>) params[0];
     }
 
     @Override

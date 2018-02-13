@@ -21,13 +21,6 @@ public class ApplicationLoader extends Application {
         super.onCreate();
         applicationContext = getApplicationContext();
         applicationHandler = new Handler(applicationContext.getMainLooper());
-    }
-
-    public static void initApplication() {
-        if (applicationInited) {
-            return;
-        }
-        applicationInited = true;
         UserConfig.init();
     }
 
